@@ -15,7 +15,7 @@
     </div>
 
     <div class="question-section">
-      <label for="last-name">Date of birth: </label>
+      <label for="date-of-birth">Date of birth: </label>
       <mat-form-field class="example-full-width">
         <mat-label> MM/DD/YYYY </mat-label>
         <input
@@ -31,12 +31,33 @@
     </div>
 
     <div class="question-section">
-      <label for="last-name">FE technology: </label>
+      <label for="fe-technology">FE technology: </label>
       <select formControlName="feTechnology">
-        <option *ngFor="let tech of technologies" [ngValue]="tech">
-          {{ tech }}
+        <option *ngFor="let tech of techData | keyvalue" [ngValue]="tech.key">
+          {{ tech.key }}
         </option>
       </select>
+    </div>
+
+    <div class="question-section">
+      <label for="technology-version">Technology Version: </label>
+      <select formControlName="feTechnologyVersion">
+        <ng-container *ngIf="frontendEngineerForm.value.feTechnology">
+          <option
+            *ngFor="
+              let version of techData[frontendEngineerForm.value.feTechnology]
+            "
+            [ngValue]="version"
+          >
+            {{ version }}
+          </option>
+        </ng-container>
+      </select>
+    </div>
+
+    <div class="question-section">
+      <label for="email">Email: </label>
+      <input id="email" type="email" formControlName="email" />
     </div>
 
     <button type="submit" [disabled]="!frontendEngineerForm.valid">

@@ -61,9 +61,10 @@ export class AppComponent implements OnInit, OnDestroy {
    * Handle form submission. Validates email against the existing email list.
    */
   onSubmit(): void {
-    const emailValue = this.frontendEngineerForm.get('email')?.value || '';
+    const emailControl = this.frontendEngineerForm.get('email');
+    const emailValue = emailControl?.value || '';
     this.userEmails.includes(emailValue)
-      ? alert('Ooops! This email already exists. Use a new one')
+      ? emailControl?.setErrors({ emailExists: true })
       : this.handleSuccessfulSubmit();
   }
 
@@ -110,7 +111,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Handles successful form submission, transforms data and logs it.
+   * Handles successful form submission, transforms data and makes post request.
    */
   private handleSuccessfulSubmit(): void {
     const { dateOfBirth, ...rest } = this.frontendEngineerForm.value;
@@ -118,7 +119,7 @@ export class AppComponent implements OnInit, OnDestroy {
       ...rest,
       dateOfBirth: this.transformDate(dateOfBirth),
     };
-    console.log(transformedValues);
+    this.data_service.addNewUser(transformedValues).subscribe(() => {});
 
     alert('Your form is successfully submitted!');
     this.frontendEngineerForm.reset();

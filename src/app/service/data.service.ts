@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
-const API_URL = 'https://dummyjson.com/users?limit=0&select=email';
+const API_URL = 'https://dummyjson.com/users';
 
 interface User {
   id: number;
@@ -15,6 +15,17 @@ interface UsersResponse {
   skip: number;
   total: number;
   users: User[];
+}
+
+interface UserInfo {
+  dateOfBirth: string | null;
+  firstName?: string | null | undefined;
+  lastName?: string | null | undefined;
+  feTechnology?: null | undefined;
+  feTechnologyVersion?: string | null | undefined;
+  email?: string | null | undefined;
+  hobbies?: unknown[] | undefined;
+  id?: number | undefined;
 }
 
 /**
@@ -32,6 +43,13 @@ export class DataService {
    * Fetches all users.
    */
   getAllUsers(): Observable<UsersResponse> {
-    return this.http.get<UsersResponse>(this.apiUrl);
+    return this.http.get<UsersResponse>(this.apiUrl + '?limit=0&select=email');
+  }
+
+  /**
+   * Sends results to the server.
+   */
+  addNewUser(userInfo: UserInfo): Observable<UserInfo> {
+    return this.http.post<UserInfo>(this.apiUrl + '/add', userInfo);
   }
 }

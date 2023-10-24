@@ -52,21 +52,8 @@ input {
   justify-content: flex-end;
 }
 
-::ng-deep mat-form-field .mat-input-element {
-  height: 10px !important;
-  padding: 0 0 !important;
-  line-height: 20px !important;
-}
-
-::ng-deep .mat-form-field-underline {
-  top: 22px !important;
-}
-
-::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
-  transform: translateY(-1.5em) scale(0.75) !important;
-}
-
-::ng-deep .mat-form-field .mat-hint,
-::ng-deep .mat-form-field .mat-error {
-  top: 2em !important;
+.error-message {
+  font-size: 17px;
+  color: red;
+  margin: 10px 0;
 }

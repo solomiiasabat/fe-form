@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClient } from '@angular/common/http';
+import { DatePipe } from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -24,7 +25,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatDatepickerModule,
     MatButtonModule,
   ],
-  providers: [provideHttpClient()],
+  providers: [provideHttpClient(), DatePipe],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -14,7 +14,7 @@
       <input id="last-name" type="text" formControlName="lastName" />
     </div>
 
-    <div class="question-section">
+    <div class="question-section date-of-birth">
       <label for="date-of-birth">Date of birth: </label>
       <mat-form-field class="example-full-width">
         <mat-label> MM/DD/YYYY </mat-label>
@@ -25,7 +25,13 @@
         />
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
-      <button mat-raised-button type="button" (click)="picker.open()">
+      <button
+        mat-stroked-button
+        color="primary"
+        type="button"
+        (click)="picker.open()"
+        class="btn-open-calendar"
+      >
         Open
       </button>
     </div>
@@ -60,8 +66,35 @@
       <input id="email" type="email" formControlName="email" />
     </div>
 
-    <button type="submit" [disabled]="!frontendEngineerForm.valid">
-      Submit
-    </button>
+    <div formArrayName="hobbies">
+      <label for="hobbies">Hobbies: </label>
+      <div *ngFor="let hobby of hobbies.controls; let i = index">
+        <!-- The repeated hobby template -->
+        <input
+          class="hobby-list"
+          id="hobby-{{ i }}"
+          type="text"
+          [formControlName]="i"
+        />
+      </div>
+      <button
+        type="button"
+        (click)="addHobby()"
+        mat-stroked-button
+        color="primary"
+      >
+        Add hobby
+      </button>
+    </div>
+    <div class="btn-submit">
+      <button
+        type="submit"
+        [disabled]="!frontendEngineerForm.valid"
+        mat-raised-button
+        color="primary"
+      >
+        Submit
+      </button>
+    </div>
   </form>
 </div>

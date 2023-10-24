@@ -1,9 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, FormArray } from '@angular/forms';
+import { DatePipe } from '@angular/common';
+
 import { Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
-import { DataService, UsersAPIResponse } from './service/data.service';
+import { DataService } from './service/data.service';
+import { minArrayLength } from './shared/hobby-validator';
 
 /**
  * This component handles the frontend engineer form.
@@ -14,15 +17,6 @@ import { DataService, UsersAPIResponse } from './service/data.service';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit, OnDestroy {
-  /** Title of the form */
-  title = 'fe-form';
-
-  /** List of user emails */
-  userEmails: string[] = [];
-
-  /** Observable to handle component destruction for unsubscribe */
-  private destroy$ = new Subject<void>();
-
   /** Available technologies and their versions */
   techData = {
     angular: ['1.1.1', '1.2.1', '1.3.3'],
@@ -38,12 +32,23 @@ export class AppComponent implements OnInit, OnDestroy {
     feTechnology: [null, Validators.required],
     feTechnologyVersion: [{ value: '', disabled: true }, Validators.required],
     email: ['', [Validators.required, Validators.email]],
+    hobbies: this.fb.array([], [minArrayLength(1)]),
   });
 
-  constructor(private fb: FormBuilder, private data_service: DataService) {}
+  /** List of user emails */
+  userEmails: string[] = [];
+
+  /** Observable to handle component destruction for unsubscribe */
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    private fb: FormBuilder,
+    private data_service: DataService,
+    private datePipe: DatePipe
+  ) {}
 
   ngOnInit(): void {
-    this.listenToTechValueChanges();
+    this.subscribeToTechValueChanges();
     this.fetchUserEmails();
   }
 
@@ -58,11 +63,28 @@ export class AppComponent implements OnInit, OnDestroy {
   onSubmit(): void {
     const emailValue = this.frontendEngineerForm.get('email')?.value || '';
     this.userEmails.includes(emailValue)
-      ? alert('Error: This email already exists!')
-      : console.log(this.frontendEngineerForm.value);
+      ? alert('Ooops! This email already exists. Use a new one')
+      : this.handleSuccessfulSubmit();
   }
 
-  private listenToTechValueChanges(): void {
+  /**
+   * Retrieves the 'hobbies' FormArray from the 'frontendEngineerForm'.
+   */
+  get hobbies(): FormArray {
+    return this.frontendEngineerForm.get('hobbies') as FormArray;
+  }
+
+  /**
+   * Adds an empty and required hobby control to the 'hobbies' form array.
+   */
+  addHobby(): void {
+    this.hobbies.push(this.fb.control('', Validators.required));
+  }
+
+  /**
+   * Listens for changes in 'feTechnology' and updates the 'feTechnologyVersion' field accordingly.
+   */
+  private subscribeToTechValueChanges(): void {
     this.frontendEngineerForm
       .get('feTechnology')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
@@ -71,10 +93,13 @@ export class AppComponent implements OnInit, OnDestroy {
           'feTechnologyVersion'
         );
         tech ? feTechVersionControl?.enable() : feTechVersionControl?.disable();
-        feTechVersionControl?.setValue(tech ? '' : feTechVersionControl?.value);
+        feTechVersionControl?.setValue('');
       });
   }
 
+  /**
+   * Fetches user emails from `data_service` and stores them in `userEmails`.
+   */
   private fetchUserEmails(): void {
     this.data_service
       .getAllUsers()
@@ -82,5 +107,25 @@ export class AppComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         this.userEmails = response.users.map((user) => user.email);
       });
+  }
+
+  /**
+   * Handles successful form submission, transforms data and logs it.
+   */
+  private handleSuccessfulSubmit(): void {
+    const { dateOfBirth, ...rest } = this.frontendEngineerForm.value;
+    const transformedValues = {
+      ...rest,
+      dateOfBirth: this.transformDate(dateOfBirth),
+    };
+    console.log(transformedValues);
+
+    alert('Your form is successfully submitted!');
+    this.frontendEngineerForm.reset();
+  }
+
+  // Utility method to transform date using DatePipe
+  private transformDate(date: Date | null | undefined): string | null {
+    return date ? this.datePipe.transform(date, 'dd-MM-yy') : null;
   }
 }

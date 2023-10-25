@@ -7,6 +7,7 @@ import { take, takeUntil } from 'rxjs/operators';
 
 import { DataService } from './service/data.service';
 import { minArrayLength } from './shared/hobby-validator';
+import { emailAsyncValidator } from './shared/email-async-validator';
 
 /**
  * This component handles the frontend engineer form.
@@ -24,6 +25,9 @@ export class AppComponent implements OnInit, OnDestroy {
     vue: ['3.3.1', '5.2.1', '5.1.3'],
   };
 
+  /** List of user emails */
+  userEmails: string[] = [];
+
   /** Form for frontend engineer */
   frontendEngineerForm = this.fb.group({
     firstName: ['', Validators.required],
@@ -31,12 +35,13 @@ export class AppComponent implements OnInit, OnDestroy {
     dateOfBirth: [null, Validators.required],
     feTechnology: [null, Validators.required],
     feTechnologyVersion: [{ value: '', disabled: true }, Validators.required],
-    email: ['', [Validators.required, Validators.email]],
+    email: [
+      '',
+      [Validators.required, Validators.email],
+      [emailAsyncValidator(this.data_service)],
+    ],
     hobbies: this.fb.array([], [minArrayLength(1)]),
   });
-
-  /** List of user emails */
-  userEmails: string[] = [];
 
   /** Observable to handle component destruction for unsubscribe */
   private destroy$ = new Subject<void>();
@@ -61,11 +66,9 @@ export class AppComponent implements OnInit, OnDestroy {
    * Handle form submission. Validates email against the existing email list.
    */
   onSubmit(): void {
-    const emailControl = this.frontendEngineerForm.get('email');
-    const emailValue = emailControl?.value || '';
-    this.userEmails.includes(emailValue)
-      ? emailControl?.setErrors({ emailExists: true })
-      : this.handleSuccessfulSubmit();
+    this.frontendEngineerForm.valid
+      ? this.handleSuccessfulSubmit()
+      : alert('Please fix the errors in your form.');
   }
 
   /**

@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 const API_URL = 'https://dummyjson.com/users';
 
+// Server responce form to work with in the component.
 interface User {
   id: number;
   email: string;
 }
 
+// Server response form.
 interface UsersResponse {
   limit: number;
   skip: number;
@@ -17,6 +19,7 @@ interface UsersResponse {
   users: User[];
 }
 
+// Form interface that will be sent to the server.
 interface UserInfo {
   dateOfBirth: string | null;
   firstName?: string | null | undefined;
@@ -44,6 +47,16 @@ export class DataService {
    */
   getAllUsers(): Observable<UsersResponse> {
     return this.http.get<UsersResponse>(this.apiUrl + '?limit=0&select=email');
+  }
+
+  /**
+   * Checks if the email exists.
+   */
+
+  emailExists(email: string): Observable<boolean> {
+    return this.getAllUsers().pipe(
+      map((response) => response.users.some((user) => user.email === email))
+    );
   }
 
   /**

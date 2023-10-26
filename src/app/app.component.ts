@@ -3,7 +3,7 @@ import { FormBuilder, Validators, FormArray } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 
 import { Subject } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 import { DataService } from './service/data.service';
 import { minArrayLength } from './shared/hobby-validator';

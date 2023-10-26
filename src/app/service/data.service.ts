@@ -5,7 +5,7 @@ import { Observable, map } from 'rxjs';
 
 const API_URL = 'https://dummyjson.com/users';
 
-// Server responce form to work with in the component.
+// Filtered server response.
 interface User {
   id: number;
   email: string;
@@ -43,20 +43,14 @@ export class DataService {
   constructor(private http: HttpClient) {}
 
   /**
-   * Fetches all users.
-   */
-  getAllUsers(): Observable<UsersResponse> {
-    return this.http.get<UsersResponse>(this.apiUrl + '?limit=0&select=email');
-  }
-
-  /**
    * Checks if the email exists.
    */
-
-  emailExists(email: string): Observable<boolean> {
-    return this.getAllUsers().pipe(
-      map((response) => response.users.some((user) => user.email === email))
-    );
+  checkEmailExists(email: string): Observable<boolean> {
+    return this.http
+      .get<UsersResponse>(this.apiUrl + '?limit=0&select=email')
+      .pipe(
+        map((response) => response.users.some((user) => user.email === email))
+      );
   }
 
   /**

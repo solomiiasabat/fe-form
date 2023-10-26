@@ -12,7 +12,7 @@ export function emailAsyncValidator(
   data_service: DataService
 ): AsyncValidatorFn {
   return (control: AbstractControl): Observable<ValidationErrors | null> => {
-    return data_service.emailExists(control.value).pipe(
+    return data_service.checkEmailExists(control.value).pipe(
       map((exists) => (exists ? { emailExists: true } : null)),
       catchError(() => of(null))
     );

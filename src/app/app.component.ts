@@ -38,7 +38,7 @@ export class AppComponent implements OnInit, OnDestroy {
     email: [
       '',
       [Validators.required, Validators.email],
-      [emailAsyncValidator(this.data_service)],
+      [emailAsyncValidator(this.dataService)],
     ],
     hobbies: this.fb.array([], [minArrayLength(1)]),
   });
@@ -48,13 +48,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private data_service: DataService,
+    private dataService: DataService,
     private datePipe: DatePipe
   ) {}
 
   ngOnInit(): void {
     this.subscribeToTechValueChanges();
-    this.fetchUserEmails();
   }
 
   ngOnDestroy(): void {
@@ -102,18 +101,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Fetches user emails from `data_service` and stores them in `userEmails`.
-   */
-  private fetchUserEmails(): void {
-    this.data_service
-      .getAllUsers()
-      .pipe(take(1))
-      .subscribe((response) => {
-        this.userEmails = response.users.map((user) => user.email);
-      });
-  }
-
-  /**
    * Handles successful form submission, transforms data and makes post request.
    */
   private handleSuccessfulSubmit(): void {
@@ -122,10 +109,13 @@ export class AppComponent implements OnInit, OnDestroy {
       ...rest,
       dateOfBirth: this.transformDate(dateOfBirth),
     };
-    this.data_service.addNewUser(transformedValues).subscribe(() => {});
-
-    alert('Your form is successfully submitted!');
-    this.frontendEngineerForm.reset();
+    this.dataService
+      .addNewUser(transformedValues)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        alert('Your form is successfully submitted!');
+        this.frontendEngineerForm.reset();
+      });
   }
 
   // Utility method to transform date using DatePipe

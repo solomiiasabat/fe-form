@@ -1,0 +1,59 @@
+label {
+  margin-right: 7px;
+  font-size: 15px;
+}
+
+input {
+  height: 20px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.main-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border: 1px solid transparent;
+  border-radius: 3%;
+  padding: 60px 40px;
+  margin-top: 20px;
+  background-color: #d8d8d8;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease;
+}
+
+.question-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 7px 0;
+}
+
+.hobby-list {
+  display: flex;
+  flex-direction: column;
+  margin: 10px 0;
+}
+
+.btn-open-calendar {
+  margin-left: 10px;
+}
+
+.btn-submit {
+  width: 100%;
+  margin: 10px 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.error-message {
+  font-size: 17px;
+  color: red;
+  margin: 10px 0;
+}
